@@ -152,7 +152,17 @@ const deleteWarehouse = (request, response) => {
 }
 
 const updateWarehouse = (request, response) => {
-    return response.json({"status":"success"})
+    console.log(request.body);
+    const collection = request.mongodb.collection('warehouse');
+    collection.updateOne({ "_id": ObjectId(request.params.id) }, { $set: request.body }, function(err, result) {
+        if(err){
+            console.log(err)
+            response.json({ status: "error", reason: err });
+        }
+        else{
+            response.json({ status: "success", reason: "updated warehouse successfully" });
+        }
+      });
 }
 
 module.exports={getAllWarehouses, getWarehousesForCustomer, getAllSensorsForWarehouse, addWarehouse, deleteWarehouse, updateWarehouse}
