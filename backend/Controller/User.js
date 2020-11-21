@@ -6,6 +6,7 @@ let login = (request, response) => {
   request.sqldb.query(sql, (err, result) => {
     if (err) {
       console.log(err);
+      response.json({ status: "error", reason: err });
     } else {
       if (result.length == 0) {
         response.json({ status: "error", reason: "user not found" });
@@ -22,6 +23,7 @@ let getAllCustomers = (request, response) => {
   request.sqldb.query(sql, (err, result) => {
     if (err) {
       console.log(err);
+      response.json({ status: "error", reason: err });
     } else {
       if (result.length == 0) {
         response.json({ status: "error", reason: "no users found" });
@@ -46,6 +48,7 @@ let getCustomerDetails = (request, response) => {
   request.sqldb.query(sql, (err, result) => {
     if (err) {
       console.log(err);
+      response.json({ status: "error", reason: err });
     } else {
       if (result.length == 0) {
         response.json({ status: "error", reason: "user not found" });
