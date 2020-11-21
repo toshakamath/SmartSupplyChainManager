@@ -58,8 +58,25 @@ const getWarehousesForCustomer = (request, response) => {
     });
 }
 
+//also first check whether user can view this warehouse
 const getAllSensorsForWarehouse = (request, response) => {
-    return response.json({"status":"success"})
+    const collection = request.mongodb.collection("sensors");
+    collection.find({warehouse_id: request.params.id}).toArray(function (err, docs) {
+        if(err){
+            console.log(err);
+            response.json({ status: "error", reason: err });
+        }
+        else{
+            console.log("Found the following records");
+            console.log(docs);
+            if(docs.length === 0){
+                response.json({ status: "error", reason: "no sensors in this warehouse" });
+            }
+            else{
+                response.json({ status: "success", reason: "list of sensors in a warehouse", sensors: docs});
+            }
+        }
+    });
 }
 
 const addWarehouse = (request, response) => {
