@@ -153,6 +153,7 @@ const deleteWarehouse = (request, response) => {
 
 const updateWarehouse = (request, response) => {
     console.log(request.body);
+    delete request.body._id
     const collection = request.mongodb.collection('warehouse');
     collection.updateOne({ "_id": ObjectId(request.params.id) }, { $set: request.body }, function(err, result) {
         if(err){
