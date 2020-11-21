@@ -42,11 +42,37 @@ const getSensorTypeAndUnit = (request, response) => {
 }
 
 const getSensorHistory = (request, response) => {
-    return response.json({"status":"success"})
+    const collection = request.mongodb.collection('sensor_history');
+    collection.find({"sensor_id":request.params.id}).toArray(function(err, docs) {
+        if(err){
+            console.log(err)
+            response.json({ status: "error", reason: err });
+        }
+        else{
+            console.log(docs);
+            response.json({ status: "success", reason: "retrieved sensor history successfully", sensor_history: docs});
+        }
+      })
 }
 
-const addSensorFakeHistory = (request, response) => {
-    return response.json({"status":"success"})
+
+//TODO: dont add if sensor is unavailable
+const addFakeSensorHistory = (request, response) => {
+    const collection = request.mongodb.collection('sensor_history');
+    const data = {
+        sensor_id:request.params.id,
+        dateTime: new Date(),
+        value: Math.floor(Math.random()*100)
+    }
+    collection.insertOne(data, function(err, docs) {
+        if(err){
+            console.log(err)
+            response.json({ status: "error", reason: err });
+        }
+        else{
+            response.json({ status: "success", reason: "added sensor history successfully"});
+        }
+      });
 }
 
 //request should contain warehouse_id also check whether warehouse ID exists before inserting 
@@ -91,4 +117,4 @@ const updateSensor = (request, response) => {
       });
 }
 
-module.exports={getSensorDetails, getSensorTypeAndUnit, getSensorHistory, addSensorFakeHistory, addSensorInWarehouse, deleteSensor, updateSensor}
+module.exports={getSensorDetails, getSensorTypeAndUnit, getSensorHistory, addFakeSensorHistory, addSensorInWarehouse, deleteSensor, updateSensor}
