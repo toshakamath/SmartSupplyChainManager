@@ -37,14 +37,18 @@ const getWarehousesForCustomer = (request, response) => {
                 response.json({ status: "error", reason: "user has no warehouses" });
             }
             else{
-                collection.find({id:{$in:JSON.parse(result[0].warehouse_id)}}).toArray(function (err, docs) {
+                let warehouseArray = JSON.parse(result[0].warehouse_id)
+                warehouseArray = warehouseArray.map((e)=>{
+                    return ObjectId(e);
+                })
+                collection.find({"_id":{$in: warehouseArray}}).toArray(function (err, docs) {
                     if(err){
                         console.log(err);
                         response.json({ status: "error", reason: err });
                     }
                     else{
                         console.log("Found the following records");
-                        console.log(docs);
+                        console.log("DOCS???",docs);
                         if(docs.length === 0){
                             response.json({ status: "error", reason: "no warehouse results found" });
                         }
