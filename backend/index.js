@@ -36,16 +36,14 @@ mysql.setupMySqlDbConnection((err, mysql_connection) => {
         });
         app.post("/login", user.login);
         app.get("/users", user.getAllCustomers);
-        // SELECT * FROM USERS
-        app.get("/user/{email}", user.getCustomerDetails);
-        // SELECT * FROM USERS where email=${email}
+        app.get("/user", user.getCustomerDetails);
         app.get("/warehouses", warehouse.getAllWarehouses);
         // const collection = db.collection('warehouse');
         // collection.find({}).toArray(function(err, docs) {
         //     console.log("Found the following records");
         //     console.log(docs)
         // });
-        app.get("/warehouse/user/{email}", warehouse.getWarehousesForCustomer);
+        app.get("/warehouse/user/:email", warehouse.getWarehousesForCustomer);
         // warehouse_id = SELECT warehouse_id from users where email=${email}
         // warehouse_id = [1,2,3]
         // const collection = db.collection('warehouse');
@@ -55,7 +53,7 @@ mysql.setupMySqlDbConnection((err, mysql_connection) => {
         //     console.log("Found the following records");
         //     console.log(docs)
         // });
-        app.get("/warehouse/{id}/sensors", warehouse.getAllSensorsForWarehouse);
+        app.get("/warehouse/:id/sensors", warehouse.getAllSensorsForWarehouse);
         // const collection = db.collection('sensors');
         // collection.find({ warehouse_id: id }).toArray(function(err, docs) {
         //     console.log("Found the following records");
@@ -79,20 +77,20 @@ mysql.setupMySqlDbConnection((err, mysql_connection) => {
         //      UPDATE USERS SET warehouse_id = [append into select query response array] WHERE email=email;
         //      response.json({shit})
         //   });)
-        app.delete("/warehouse/{id}", warehouse.deleteWarehouse);
+        app.delete("/warehouse/:id", warehouse.deleteWarehouse);
         // const collection = db.collection('warehouse');
         // db.inventory.deleteOne( { id: id }, function(err, result) {
         //     console.log("Updated the document with the field a equal to 2");
         //      response.json({shit})
         //   }); )
-        app.put("/warehouse/{id}", warehouse.updateWarehouse);
+        app.put("/warehouse/:id", warehouse.updateWarehouse);
         // const collection = db.collection('warehouse');
         // collection.updateOne({ id : id }
         //     , { $set: req.body }, function(err, result) {
         //     console.log("Updated the document with the field a equal to 2");
         //      response.json({shit})
         //   });
-        app.get("/sensor/{id}", sensor.getSensorDetails);
+        app.get("/sensor/:id", sensor.getSensorDetails);
         // const collection = db.collection('sensors');
         // collection.find({ id: id }).toArray(function(err, docs) {
         //     console.log("Found the following records");
@@ -104,7 +102,7 @@ mysql.setupMySqlDbConnection((err, mysql_connection) => {
         //     console.log("Found the following records");
         //     console.log(docs)
         // });
-        app.get("/sensor/{id}/history", sensor.getSensorHistory);
+        app.get("/sensor/:id/history", sensor.getSensorHistory);
         // const collection = db.collection('sensor_history');
         // collection.find({ sensor_id: id }).toArray(function(err, docs) {
         //     console.log("Found the following records");
@@ -124,13 +122,13 @@ mysql.setupMySqlDbConnection((err, mysql_connection) => {
         //     console.log("Updated the document with the field a equal to 2");
         //      response.json({shit})
         //   });)
-        app.delete("/sensor/{id}", sensor.deleteSensor);
+        app.delete("/sensor/:id", sensor.deleteSensor);
         // const collection = db.collection('sensor');
         // db.inventory.deleteOne( { id: id }, function(err, result) {
         //     console.log("Updated the document with the field a equal to 2");
         //      response.json({shit})
         //   }); )
-        app.put("/sensor/{id}", sensor.updateSensor);
+        app.put("/sensor/:id", sensor.updateSensor);
         // const collection = db.collection('sensor');
         // collection.updateOne({ id : id }
         //     , { $set: req.body }, function(err, result) {
