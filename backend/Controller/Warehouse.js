@@ -1,3 +1,4 @@
+ObjectId = require('mongodb').ObjectID
 const tableName = "smartsupplychain_db.users";
 
 const getAllWarehouses = (request, response) => {
@@ -113,12 +114,41 @@ const addWarehouse = (request, response) => {
             });
         }
       });
-
-
 }
 
 const deleteWarehouse = (request, response) => {
-    return response.json({"status":"success"})
+    const collection = request.mongodb.collection('warehouse');
+    collection.deleteOne({ "_id": ObjectId(request.params.id) }, function(err, result) {
+        if(err){
+            console.log(err)
+            response.json({ status: "error", reason: err });
+        }
+        else{
+            const sql_getWarehouseArray = `SELECT warehouse_id from ${tableName} where email='${request.body.email}'`
+            request.sqldb.query(sql_getWarehouseArray, (err, result) => {
+                if (err) {
+                console.log(err);
+                response.json({ status: "error", reason: err });
+                } else {
+                if (result.length == 0) {
+                    response.json({ status: "error", reason: "user not found" });
+                } else {
+                    let warehouseArray = JSON.parse(result[0].warehouse_id||"[]");
+                    warehouseArray.indexOf(request.params.id) >=0 ? warehouseArray.splice(warehouseArray.indexOf(request.params.id),1):null;
+                    const sql_updateWarehouseArray = `UPDATE ${tableName} SET warehouse_id='${JSON.stringify(warehouseArray)}' WHERE email='${request.body.email}';`
+                    request.sqldb.query(sql_updateWarehouseArray, (err, result) => {
+                        if (err) {
+                        console.log(err);
+                        response.json({ status: "error", reason: err });
+                        } else {
+                            response.json({ status: "success", reason: "deleted warehouse successfully" });
+                        }
+                    });
+                }
+                }
+            });
+        }
+      });
 }
 
 const updateWarehouse = (request, response) => {
