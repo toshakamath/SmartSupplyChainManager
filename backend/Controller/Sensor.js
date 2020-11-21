@@ -45,6 +45,10 @@ const getSensorHistory = (request, response) => {
     return response.json({"status":"success"})
 }
 
+const addSensorFakeHistory = (request, response) => {
+    return response.json({"status":"success"})
+}
+
 //request should contain warehouse_id also check whether warehouse ID exists before inserting 
 const addSensorInWarehouse = (request, response) => {
     const collection = request.mongodb.collection('sensor');
@@ -54,17 +58,37 @@ const addSensorInWarehouse = (request, response) => {
             response.json({ status: "error", reason: err });
         }
         else{
-            response.json({ status: "success", reason: "sensor details"});
+            response.json({ status: "success", reason: "added sensor successfully"});
         }
       });
 }
 
 const deleteSensor = (request, response) => {
-    return response.json({"status":"success"})
+    const collection = request.mongodb.collection('sensor');
+    collection.deleteOne({ "_id": ObjectId(request.params.id) }, function(err, docs) {
+        if(err){
+            console.log(err)
+            response.json({ status: "error", reason: err });
+        }
+        else{
+            response.json({ status: "success", reason: "deleted sensor successfully"});
+        }
+      });
 }
 
 const updateSensor = (request, response) => {
-    return response.json({"status":"success"})
+    console.log(request.body);
+    delete request.body._id
+    const collection = request.mongodb.collection('sensor');
+    collection.updateOne({ "_id": ObjectId(request.params.id) }, { $set: request.body }, function(err, result) {
+        if(err){
+            console.log(err)
+            response.json({ status: "error", reason: err });
+        }
+        else{
+            response.json({ status: "success", reason: "updated sensor successfully" });
+        }
+      });
 }
 
-module.exports={getSensorDetails, getSensorTypeAndUnit, getSensorHistory, addSensorInWarehouse, deleteSensor, updateSensor}
+module.exports={getSensorDetails, getSensorTypeAndUnit, getSensorHistory, addSensorFakeHistory, addSensorInWarehouse, deleteSensor, updateSensor}
