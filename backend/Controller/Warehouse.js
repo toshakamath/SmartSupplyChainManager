@@ -80,7 +80,41 @@ const getAllSensorsForWarehouse = (request, response) => {
 }
 
 const addWarehouse = (request, response) => {
-    return response.json({"status":"success"})
+    const collection = request.mongodb.collection('warehouse');
+    collection.insertOne(request.body, function(err, result) {
+        if(err){
+            console.log(err)
+            response.json({ status: "error", reason: err });
+        }
+        else{
+            const id = result.insertedId
+            const sql_getWarehouseArray = `SELECT warehouse_id from ${tableName} where email='${request.body.email}'`
+            request.sqldb.query(sql_getWarehouseArray, (err, result) => {
+                if (err) {
+                console.log(err);
+                response.json({ status: "error", reason: err });
+                } else {
+                if (result.length == 0) {
+                    response.json({ status: "error", reason: "user not found" });
+                } else {
+                    let warehouseArray = JSON.parse(result[0].warehouse_id||"[]");
+                    warehouseArray.push(id);
+                    const sql_updateWarehouseArray = `UPDATE ${tableName} SET warehouse_id='${JSON.stringify(warehouseArray)}' WHERE email='${request.body.email}';`
+                    request.sqldb.query(sql_updateWarehouseArray, (err, result) => {
+                        if (err) {
+                        console.log(err);
+                        response.json({ status: "error", reason: err });
+                        } else {
+                            response.json({ status: "success", reason: "added warehouse details successfully" });
+                        }
+                    });
+                }
+                }
+            });
+        }
+      });
+
+
 }
 
 const deleteWarehouse = (request, response) => {
