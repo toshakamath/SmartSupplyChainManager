@@ -1,22 +1,24 @@
 
+ObjectId = require('mongodb').ObjectID
+
 const getSensorDetails = (request, response) => {
-    // const collection = request.mongodb.collection("sensors");
-    // collection.find({id: request.params.id}).toArray(function (err, docs) {
-    //     if(err){
-    //         console.log(err);
-    //         response.json({ status: "error", reason: err });
-    //     }
-    //     else{
-    //         console.log("Found the following records");
-    //         console.log(docs);
-    //         if(docs.length === 0){
-    //             response.json({ status: "error", reason: "no sensors in this warehouse" });
-    //         }
-    //         else{
-    //             response.json({ status: "success", reason: "sensor details", sensors: docs});
-    //         }
-    //     }
-    // });
+    const collection = request.mongodb.collection("sensor");
+    collection.find({"_id": ObjectId(request.params.id)}).toArray(function (err, docs) {
+        if(err){
+            console.log(err);
+            response.json({ status: "error", reason: err });
+        }
+        else{
+            console.log("Found the following records");
+            console.log(docs);
+            if(docs.length === 0){
+                response.json({ status: "error", reason: "sensor is not present" });
+            }
+            else{
+                response.json({ status: "success", reason: "sensor details", sensors: docs[0]});
+            }
+        }
+    });
 }
 
 const getSensorTypeAndUnit = (request, response) => {
