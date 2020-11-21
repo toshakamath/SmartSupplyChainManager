@@ -22,7 +22,23 @@ const getSensorDetails = (request, response) => {
 }
 
 const getSensorTypeAndUnit = (request, response) => {
-    return response.json({"status":"success"})
+    const collection = request.mongodb.collection('sensor_type_unit_map');
+    collection.find({}).toArray(function (err, docs) {
+        if(err){
+            console.log(err);
+            response.json({ status: "error", reason: err });
+        }
+        else{
+            console.log("Found the following records");
+            console.log(docs);
+            if(docs.length === 0){
+                response.json({ status: "error", reason: "no sensors in this warehouse" });
+            }
+            else{
+                response.json({ status: "success", reason: "sensor details", sensors: docs});
+            }
+        }
+    });
 }
 
 const getSensorHistory = (request, response) => {
